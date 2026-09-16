@@ -1,0 +1,238 @@
+/* 
+ * Cataract Surgery Real-Time Monitoring System
+ * Theme: Bright Pastel Orange & Pure White with Anuphan Font
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-anuphan: 'Anuphan', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --primary-orange: #ff7e36;
+  --primary-orange-hover: #f96815;
+  --primary-pastel: #fff0e6;
+  --bg-gradient-start: #fffaf5;
+  --bg-gradient-end: #f4f6fb;
+}
+
+body {
+  font-family: var(--font-anuphan);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  min-height: 100vh;
+  color: #1e293b;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 126, 54, 0.12);
+  box-shadow: 0 10px 30px -10px rgba(255, 126, 54, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px -12px rgba(255, 126, 54, 0.16), 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Status Badges */
+.badge-status {
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.badge-waiting {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.badge-preop {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+
+.badge-in_surgery {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  animation: pulse-orange 2s infinite;
+}
+
+.badge-postop {
+  background-color: #d1fae5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-transferred {
+  background-color: #ccfbf1;
+  color: #0f766e;
+  border: 1px solid #99f6e4;
+}
+
+.badge-cancelled {
+  background-color: #ffe4e6;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+/* Pulse Animations */
+@keyframes pulse-orange {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 126, 54, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 126, 54, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 126, 54, 0);
+  }
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: pulse-dot-anim 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+/* Custom DataTables Override */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid #fed7aa !important;
+  border-radius: 0.5rem !important;
+  padding: 0.4rem 0.8rem !important;
+  outline: none !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #ff7e36 !important;
+  box-shadow: 0 0 0 3px rgba(255, 126, 54, 0.2) !important;
+}
+
+table.dataTable {
+  border-collapse: separate !important;
+  border-spacing: 0 0.4rem !important;
+}
+
+table.dataTable tbody tr {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
+  transition: all 0.15s ease;
+}
+
+table.dataTable tbody tr:hover {
+  background-color: #fffaf5 !important;
+}
+
+table.dataTable tbody td {
+  padding: 0.85rem 1rem !important;
+  border: none !important;
+}
+
+table.dataTable thead th {
+  color: #64748b !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid #fed7aa !important;
+  padding: 0.75rem 1rem !important;
+}
+
+/* DataTables Buttons Styling */
+.dt-buttons .dt-button {
+  background: #ffffff !important;
+  border: 1px solid #fed7aa !important;
+  color: #ea580c !important;
+  font-weight: 600 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.4rem 0.9rem !important;
+  font-size: 0.85rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(255,126,54,0.06) !important;
+}
+
+.dt-buttons .dt-button:hover {
+  background: #ff7e36 !important;
+  color: #ffffff !important;
+  border-color: #ff7e36 !important;
+  transform: translateY(-1px);
+}
+
+/* Select2 Custom Styling */
+.select2-container--default .select2-selection--single {
+  border: 1px solid #fed7aa !important;
+  border-radius: 0.5rem !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: #ffffff !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 44px !important;
+  color: #334155 !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 42px !important;
+}
+
+.select2-dropdown {
+  border: 1px solid #fed7aa !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+  overflow: hidden !important;
+}
+
+.select2-results__option--highlighted[aria-selected] {
+  background-color: #ff7e36 !important;
+}
+
+/* TV Monitor Custom Board Styling */
+.tv-board-bg {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.tv-card-waiting { background: rgba(30, 41, 59, 0.8); border-left: 4px solid #f59e0b; }
+.tv-card-preop { background: rgba(30, 41, 59, 0.8); border-left: 4px solid #6366f1; }
+.tv-card-in_surgery { background: rgba(255, 126, 54, 0.15); border-left: 6px solid #ff7e36; }
+.tv-card-postop { background: rgba(30, 41, 59, 0.8); border-left: 4px solid #10b981; }
+.tv-card-transferred { background: rgba(30, 41, 59, 0.8); border-left: 4px solid #14b8a6; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ff7e36;
+}
