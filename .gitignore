@@ -11,7 +11,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # ===== BUILD OUTPUT =====
-dist/
+# dist/ is committed for server deployment (server may not have Node.js)
+# Run: npm run build && git add dist/ && git push before deploying
 
 # ===== PYTHON =====
 __pycache__/
