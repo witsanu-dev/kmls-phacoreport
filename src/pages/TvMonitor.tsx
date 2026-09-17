@@ -77,24 +77,24 @@ export const TvMonitor: React.FC<TvMonitorProps> = ({ onBack }) => {
   return (
     <div className="w-full h-screen max-h-screen bg-slate-950 text-white flex flex-col select-none font-anuphan overflow-hidden">
 
-      {/* ── Header ── */}
-      <header className="bg-slate-900 border-b border-slate-800 shadow-2xl px-4 py-2.5 sm:px-6 sm:py-3.5 flex-shrink-0">
-        <div className="flex items-center justify-between gap-3 flex-wrap">
+      {/* ── Header (Full Responsive Col-12) ── */}
+      <header className="bg-slate-900 border-b border-slate-800 shadow-2xl px-4 py-3 sm:px-6 sm:py-4 flex-shrink-0">
+        <div className="w-full flex flex-col md:flex-row md:items-center justify-between gap-3">
 
           {/* Left: Icon + Title */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-md bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/30 flex-shrink-0">
-              <Monitor className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-tr from-orange-600 via-orange-500 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/20 flex-shrink-0">
+              <Monitor className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-white leading-tight truncate">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-black tracking-tight text-white leading-tight truncate">
                 กระดานติดตามการผ่าตัดต้อกระจก
               </h1>
               <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                <p className="text-xs sm:text-sm text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-300 font-medium truncate">
                   ตารางแสดงสถานะเคสผ่าตัดสำหรับผู้รับบริการและญาติ
                 </p>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] sm:text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40 flex-shrink-0">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40 flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-orange-400 mr-1.5 animate-pulse"></span>
                   MONITOR BOARD
                 </span>
@@ -102,39 +102,35 @@ export const TvMonitor: React.FC<TvMonitorProps> = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Right: Clock + Buttons */}
-          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <div className="text-right hidden xs:block">
-              <div className="text-[10px] sm:text-xs text-orange-400 font-semibold tracking-wider">{dateStr}</div>
-              <div className="text-xl sm:text-2xl md:text-3xl font-mono font-bold text-white tracking-widest leading-none mt-0.5">
+          {/* Right: Clock + Dashboard/Fullscreen Buttons */}
+          <div className="flex items-center justify-between md:justify-end gap-3 flex-shrink-0 pt-1 md:pt-0 border-t md:border-t-0 border-slate-800/80">
+            <div className="text-left md:text-right">
+              <div className="text-[10px] sm:text-xs text-orange-400 font-bold tracking-wider">{dateStr}</div>
+              <div className="text-lg sm:text-2xl md:text-3xl font-mono font-black text-white tracking-widest leading-none mt-0.5">
                 {timeStr}
               </div>
             </div>
 
-            {onBack && (
+            <div className="flex items-center gap-2.5">
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="p-2.5 sm:p-3 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-all border border-orange-400 shadow-md flex items-center justify-center cursor-pointer"
+                  title="กลับหน้า Dashboards"
+                >
+                  <LayoutDashboard className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5] text-white" />
+                </button>
+              )}
+
               <button
-                onClick={onBack}
-                className="p-2 sm:p-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-all border border-orange-400 shadow-md flex items-center justify-center cursor-pointer"
-                title="กลับหน้า Dashboards"
+                onClick={toggleFullscreen}
+                className="p-2.5 sm:p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md transition-all border border-slate-700 cursor-pointer flex items-center justify-center"
+                title="เต็มหน้าจอ"
               >
-                <LayoutDashboard className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5] text-white" />
+                <Maximize2 className="w-5 h-5 sm:w-6 sm:h-6 text-slate-200" />
               </button>
-            )}
-
-            <button
-              onClick={toggleFullscreen}
-              className="p-2 sm:p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md transition-all border border-slate-700 cursor-pointer"
-              title="เต็มหน้าจอ"
-            >
-              <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
+            </div>
           </div>
-        </div>
-
-        {/* Mobile clock row */}
-        <div className="flex xs:hidden items-center justify-between mt-2 pt-2 border-t border-slate-800">
-          <span className="text-xs text-slate-400">{dateStr}</span>
-          <span className="text-lg font-mono font-bold text-white tracking-widest">{timeStr}</span>
         </div>
       </header>
 

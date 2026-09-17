@@ -209,6 +209,55 @@ export const QueueManage: React.FC = () => {
       const searchKeyword = `${p.fname || ''} ${p.lname || ''}`.trim() || p.hn || String(p.id);
       setTableSearch(searchKeyword);
 
+      // Show warning/notification dialog with patient details & surgery method colors
+      const rawMethod = (p.surgery_method || 'Phaco iol/RE').trim();
+      const rawUpper = rawMethod.toUpperCase();
+      let badgeStyle = 'background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;'; // Phaco IOL -> Green default
+      if (rawUpper.includes('ECCE') && (rawUpper.includes('SHIFT') || rawUpper.includes('/SHIFT'))) {
+        badgeStyle = 'background-color: #fefce8; color: #854d0e; border: 1px solid #fde047;'; // ECCE/Shift -> Yellow
+      } else if (rawUpper.includes('ECCE')) {
+        badgeStyle = 'background-color: #fef2f2; color: #991b1b; border: 1px solid #fca5a5;'; // ECCE IOL -> Red
+      } else if (rawUpper.includes('PHACO')) {
+        badgeStyle = 'background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;'; // Phaco IOL -> Green
+      }
+
+      const fullName = `${p.pname || ''}${p.fname || ''} ${p.lname || ''}`.trim();
+      const ageStr = p.age ? `${p.age} ปี` : '-';
+      const screeningNo = p.screening_no || '-';
+
+      Swal.fire({
+        title: '<div style="font-family: \'Anuphan\', sans-serif; font-size: 20px; font-weight: 700; color: #1e293b;">เลือกข้อมูลผู้มารับบริการเรียบร้อย</div>',
+        html: `
+          <div style="font-family: 'Anuphan', sans-serif; text-align: left; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-top: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #cbd5e1;">
+              <span style="color: #475569; font-weight: 600; font-size: 14px;">ลำดับคัดกรอง:</span>
+              <span style="font-weight: 800; font-size: 22px; color: #c2410c; background-color: #ffedd5; border: 1.5px solid #fdba74; padding: 4px 14px; border-radius: 8px; font-family: monospace; letter-spacing: 0.5px;">${screeningNo}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <span style="color: #475569; font-weight: 600; font-size: 14px;">ชื่อ-นามสกุล:</span>
+              <span style="font-weight: 700; font-size: 16px; color: #0f172a;">${fullName}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #cbd5e1;">
+              <span style="color: #475569; font-weight: 600; font-size: 14px;">อายุ:</span>
+              <span style="font-weight: 700; font-size: 15px; color: #334155;">${ageStr}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #475569; font-weight: 600; font-size: 14px;">วิธีผ่าตัด:</span>
+              <span style="font-weight: 800; font-size: 16px; padding: 6px 14px; border-radius: 8px; ${badgeStyle}">${rawMethod}</span>
+            </div>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'ตกลง',
+        confirmButtonColor: '#f97316',
+        showCloseButton: true,
+        timer: 30000,
+        timerProgressBar: true,
+        allowEnterKey: true,
+        focusConfirm: true,
+        customClass: { popup: 'rounded-xl font-anuphan max-w-md w-full' },
+      });
+
       // Auto Scroll & Auto Focus
       setTimeout(() => {
         if (formRef.current) {
@@ -405,10 +454,12 @@ export const QueueManage: React.FC = () => {
         const surgeon = (p.surgeon || '').toLowerCase();
         const note = (p.note || '').toLowerCase();
 
+        const screeningNo = String(p.screening_no || '').toLowerCase();
         const match =
           fullName.includes(q) ||
           hn.includes(q) ||
           cid.includes(q) ||
+          screeningNo.includes(q) ||
           queue.includes(q) ||
           id.includes(q) ||
           method.includes(q) ||
@@ -624,15 +675,15 @@ export const QueueManage: React.FC = () => {
                 </div>
               </div>
               {/* สิทธิการรักษา */}
-              <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-md px-2.5 py-1.5 min-w-0">
-                <Shield className="w-3 h-3 text-orange-500 shrink-0" />
+              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 min-w-0">
+                <Shield className="w-3 h-3 text-slate-400 shrink-0" />
                 <div className="min-w-0 w-full">
-                  <div className="text-[10px] text-orange-600 font-semibold leading-none mb-0.5">สิทธิการรักษา</div>
+                  <div className="text-[10px] text-slate-400 font-medium leading-none mb-0.5">สิทธิการรักษา</div>
                   <input
                     type="text"
                     readOnly
                     value={selectedPatient.pttype || '-'}
-                    className="w-full text-xs font-bold text-orange-700 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none truncate cursor-default"
+                    className="w-full text-xs font-bold text-slate-700 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none truncate cursor-default"
                     title={selectedPatient.pttype || '-'}
                   />
                 </div>
@@ -666,7 +717,48 @@ export const QueueManage: React.FC = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* ── Row 1: Order of Inputs per User Requirement ── */}
+            {/* 1. ลำดับการคัดกรอง (Pastel Orange Readonly) | 2. วิธีผ่าตัด | 3. ลำดับคิวผ่าตัดวันนี้ | 4. สถานะผ่าตัด */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-orange-800 mb-1">
+                  ลำดับการคัดกรอง
+                </label>
+                <input
+                  type="text"
+                  readOnly
+                  value={selectedPatient.screening_no || '-'}
+                  className="w-full px-3 py-2 bg-orange-100/80 border border-orange-300 rounded-md text-sm font-extrabold text-orange-900 cursor-default select-none focus:outline-none shadow-2xs font-mono"
+                  title="ลำดับการคัดกรอง (Readonly)"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  วิธีผ่าตัด (Surgery Method)
+                </label>
+                {(() => {
+                  const mUpper = (formMethod || '').toUpperCase();
+                  let methodBgClass = 'bg-slate-100 text-slate-800 border-slate-200';
+                  if (mUpper.includes('ECCE') && (mUpper.includes('SHIFT') || mUpper.includes('/SHIFT'))) {
+                    methodBgClass = 'bg-yellow-100 text-yellow-800 border-yellow-300 font-extrabold';
+                  } else if (mUpper.includes('ECCE')) {
+                    methodBgClass = 'bg-red-100 text-red-700 border-red-300 font-extrabold';
+                  } else if (mUpper.includes('PHACO')) {
+                    methodBgClass = 'bg-emerald-100 text-emerald-800 border-emerald-300 font-extrabold';
+                  }
+                  return (
+                    <input
+                      type="text"
+                      readOnly
+                      value={formMethod}
+                      className={`w-full px-3 py-2 border rounded-md text-sm cursor-default select-none focus:outline-none ${methodBgClass}`}
+                      title="วิธีผ่าตัดไม่สามารถแก้ไขได้"
+                    />
+                  );
+                })()}
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   ลำดับคิวผ่าตัดวันนี้
@@ -683,18 +775,6 @@ export const QueueManage: React.FC = () => {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  วันที่ผ่าตัด
-                </label>
-                <input
-                  type="date"
-                  value={formDate}
-                  onChange={(e) => setFormDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm focus:ring-2 focus:ring-orange-500 font-semibold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
                   สถานะการผ่าตัด <span className="text-red-500">*</span>
                 </label>
                 <SearchableSelect
@@ -705,23 +785,10 @@ export const QueueManage: React.FC = () => {
                   searchPlaceholder="ค้นหาสถานะ..."
                 />
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  วิธีผ่าตัด (Surgery Method)
-                </label>
-                <input
-                  type="text"
-                  readOnly
-                  value={formMethod}
-                  className="w-full px-3 py-2 bg-orange-50 border border-orange-200 rounded-md text-sm font-bold text-orange-600 cursor-default select-none focus:outline-none"
-                  title="วิธีผ่าตัดไม่สามารถแก้ไขได้"
-                />
-              </div>
             </div>
 
-            {/* Ward + Surgeon + Note row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* ── Row 2: 5. หอผู้ป่วยหลังผ่าตัด | 6. แพทย์ผู้ผ่าตัด | 7. หมายเหตุเพิ่มเติม | 8. วันที่ผ่าตัด ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   หอผู้ป่วยหลังผ่าตัด (Post-op Ward)
@@ -749,7 +816,7 @@ export const QueueManage: React.FC = () => {
                 />
               </div>
 
-              <div className="md:col-span-1">
+              <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
                   หมายเหตุเพิ่มเติม (Note)
                 </label>
@@ -759,6 +826,18 @@ export const QueueManage: React.FC = () => {
                   onChange={(e) => setFormNote(e.target.value)}
                   placeholder="กรอกข้อความหมายเหตุ..."
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs font-medium text-slate-800 focus:ring-2 focus:ring-orange-500 focus:bg-white resize-none transition-all h-[38px]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  วันที่ผ่าตัด
+                </label>
+                <input
+                  type="date"
+                  value={formDate}
+                  onChange={(e) => setFormDate(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm focus:ring-2 focus:ring-orange-500 font-semibold"
                 />
               </div>
             </div>
@@ -803,16 +882,12 @@ export const QueueManage: React.FC = () => {
               </div>
             )}
 
-            {/* Readonly Clinical Information Card - Full Width 5 Columns */}
+            {/* Readonly Clinical Information Card - Responsive Grid (4 Items) */}
             <div className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-md font-anuphan">
-              <div className="grid grid-cols-5 gap-2.5 text-xs">
-                <div className="bg-white px-3 py-2 rounded-md border border-slate-200/60 shadow-2xs space-y-0.5">
-                  <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wide">ลำดับคัดกรอง</span>
-                  <span className="font-bold text-slate-800 text-sm font-mono">{selectedPatient.screening_no || '-'}</span>
-                </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                 <div className="bg-white px-3 py-2 rounded-md border border-slate-200/60 shadow-2xs space-y-0.5">
                   <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wide">วันที่คัดกรอง</span>
-                  <span className="font-bold text-slate-800 text-sm">
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm truncate block">
                     {selectedPatient.screening_date
                       ? (() => {
                           try {
@@ -825,15 +900,15 @@ export const QueueManage: React.FC = () => {
                 </div>
                 <div className="bg-white px-3 py-2 rounded-md border border-slate-200/60 shadow-2xs space-y-0.5">
                   <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wide">กำลังเลนส์</span>
-                  <span className="font-bold text-slate-800 text-sm font-mono">{selectedPatient.lens_power || '-'}</span>
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm font-mono truncate block">{selectedPatient.lens_power || '-'}</span>
                 </div>
                 <div className="bg-white px-3 py-2 rounded-md border border-slate-200/60 shadow-2xs space-y-0.5">
                   <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wide">Anterior Chamber</span>
-                  <span className="font-bold text-slate-800 text-sm">{selectedPatient.anterior_chamber || '-'}</span>
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm truncate block">{selectedPatient.anterior_chamber || '-'}</span>
                 </div>
                 <div className="bg-white px-3 py-2 rounded-md border border-slate-200/60 shadow-2xs space-y-0.5">
                   <span className="block text-[10px] text-slate-400 font-medium uppercase tracking-wide">การวินิจฉัย</span>
-                  <span className="font-bold text-slate-800 text-sm font-mono">{selectedPatient.diagnosis_code || '-'}</span>
+                  <span className="font-bold text-slate-800 text-xs sm:text-sm font-mono truncate block">{selectedPatient.diagnosis_code || '-'}</span>
                 </div>
               </div>
             </div>
@@ -847,11 +922,10 @@ export const QueueManage: React.FC = () => {
               >
                 <span className="flex items-center gap-2">
                   <Sliders className="w-3.5 h-3.5 text-orange-500" />
-                  <span>รายละเอียดการผ่าตัดเพิ่มเติม (Visual Acuity, Lens, ทีมแพทย์/พยาบาล, เวลาผ่าตัด)</span>
+                  <span>รายละเอียดการผ่าตัดเพิ่มเติม</span>
                 </span>
-                <span className="text-[11px] text-orange-600 font-bold flex items-center gap-1">
-                  {showAdditionalFields ? 'ซ่อนตัวเลือกเพิ่มเติม' : 'แสดงตัวเลือกเพิ่มเติม'}
-                  {showAdditionalFields ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                <span className="text-slate-600 hover:text-orange-600 transition-colors p-1">
+                  {showAdditionalFields ? <ChevronUp className="w-5 h-5 stroke-[3]" /> : <ChevronDown className="w-5 h-5 stroke-[3]" />}
                 </span>
               </button>
 
@@ -1065,16 +1139,16 @@ export const QueueManage: React.FC = () => {
             </div>
           </div>
 
-          {/* Filter Controls Row */}
-          <div className="flex flex-wrap items-center gap-3 pt-1">
+          {/* Filter Controls Row - Responsive col-12 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-3 pt-1 items-center">
             {/* Real-time search in table */}
-            <div className="relative flex-1 min-w-[240px]">
+            <div className="relative md:col-span-6 lg:col-span-5">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={tableSearch}
                 onChange={(e) => setTableSearch(e.target.value)}
-                placeholder="กรอกข้อมูลค้นหา..."
+                placeholder="กรอกข้อมูลค้นหา (HN, ชื่อ, ลำดับคัดกรอง)..."
                 className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-md text-xs font-medium focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
               {tableSearch && (
@@ -1089,7 +1163,7 @@ export const QueueManage: React.FC = () => {
 
             {/* Surgery Method Filter */}
             <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors md:col-span-3 lg:col-span-3 ${
                 methodFilter ? 'border-orange-400 bg-orange-50' : 'border-slate-200 bg-slate-50'
               }`}
             >
@@ -1097,7 +1171,7 @@ export const QueueManage: React.FC = () => {
               <select
                 value={methodFilter}
                 onChange={(e) => setMethodFilter(e.target.value)}
-                className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer w-full"
               >
                 <option value="">ทุกประเภทผ่าตัด</option>
                 <option value="Phaco iol/RE">Phaco iol/RE</option>
@@ -1114,16 +1188,16 @@ export const QueueManage: React.FC = () => {
 
             {/* Status Filter */}
             <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md border transition-colors md:col-span-3 lg:col-span-3 ${
                 filterStatus ? 'border-orange-400 bg-orange-50' : 'border-slate-200 bg-slate-50'
               }`}
             >
-              <Filter className="w-3.5 h-3.5 text-orange-500" />
-              <span className="text-xs text-slate-500 font-semibold whitespace-nowrap">สถานะผ่าตัด:</span>
+              <Filter className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+              <span className="text-xs text-slate-500 font-semibold whitespace-nowrap">สถานะ:</span>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer w-full"
               >
                 <option value="">ทุกสถานะ</option>
                 <option value="รอผ่าตัด">รอผ่าตัด</option>
@@ -1137,12 +1211,14 @@ export const QueueManage: React.FC = () => {
 
             {/* Clear Filters button */}
             {activeFilterCount > 0 && (
-              <button
-                onClick={resetFilters}
-                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" /> ล้างตัวกรอง
-              </button>
+              <div className="md:col-span-12 lg:col-span-1 flex justify-end">
+                <button
+                  onClick={resetFilters}
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap"
+                >
+                  <X className="w-3.5 h-3.5" /> ล้างตัวกรอง
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -1187,11 +1263,11 @@ export const QueueManage: React.FC = () => {
                             <span className="text-slate-300">-</span>
                           )}
                         </td>
-                        <td className="py-3 px-3.5 font-mono text-xs text-slate-400 align-middle whitespace-nowrap">
+                        <td className="py-3 px-3.5 font-mono text-xs text-slate-900 font-bold align-middle whitespace-nowrap">
                           #{p.id}
                         </td>
                         <td className="py-3 px-3.5 align-middle whitespace-nowrap">
-                          <div className="font-bold text-slate-800 text-sm leading-snug flex items-center gap-2">
+                          <div className="font-bold text-slate-950 text-sm leading-snug flex items-center gap-2">
                             <span>{p.pname || ''}{p.fname || ''} {p.lname || ''}</span>
                             {isSelected && (
                               <span className="px-2 py-0.5 text-[10px] font-bold bg-orange-600 text-white rounded-md shadow-2xs animate-pulse flex items-center gap-1">
@@ -1199,9 +1275,9 @@ export const QueueManage: React.FC = () => {
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-                            <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-orange-50 text-orange-600 rounded-md border border-orange-300 shadow-2xs">H25.9</span>
-                            <span>HN: {p.hn || '-'} | CID: {p.cid || '-'}</span>
+                          <div className="text-xs text-slate-800 font-medium flex items-center gap-1.5 mt-0.5">
+                            <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-orange-100 text-orange-800 rounded-md border border-orange-300 shadow-2xs">H25.9</span>
+                            <span>HN: <strong className="text-slate-950 font-bold">{p.hn || '-'}</strong> | CID: <strong className="text-slate-950 font-bold">{p.cid || '-'}</strong></span>
                           </div>
                         </td>
                         <td className="py-3 px-3.5 align-middle whitespace-nowrap">

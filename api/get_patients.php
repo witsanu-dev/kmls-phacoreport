@@ -20,29 +20,39 @@ try {
     // 2. Select2 Search Endpoint (combobox search)
     if (isset($_GET['select2']) && $_GET['select2'] === '1') {
         $q = trim($_GET['q'] ?? '');
-        $sql = "SELECT id, cid, hn, pname, fname, lname, age, status, ward, queue, surgery_date 
+        $sql = "SELECT id, screening_no, cid, hn, pname, fname, lname, age, status, ward, queue, surgery_date 
                 FROM screen WHERE 1=1";
         $params = [];
         
+        $orderBy = "ORDER BY id DESC";
         if ($q !== '') {
-            $sql .= " AND (cid LIKE ? OR fname LIKE ? OR lname LIKE ? OR hn LIKE ? OR id LIKE ? OR surgeon LIKE ? OR ward LIKE ? OR surgery_method LIKE ?)";
-            $searchTerm = "%{$q}%";
-            $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm];
+            if (is_numeric($q)) {
+                $numVal = (int)$q;
+                $sql .= " AND (screening_no = ? OR id = ? OR screening_no LIKE ? OR cid LIKE ? OR fname LIKE ? OR lname LIKE ? OR hn LIKE ?)";
+                $searchTerm = "%{$q}%";
+                $params = [$numVal, $numVal, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm];
+                $orderBy = "ORDER BY CASE WHEN screening_no = {$numVal} THEN 0 WHEN id = {$numVal} THEN 1 ELSE 2 END, id DESC";
+            } else {
+                $sql .= " AND (screening_no LIKE ? OR cid LIKE ? OR fname LIKE ? OR lname LIKE ? OR hn LIKE ? OR id LIKE ? OR surgeon LIKE ? OR ward LIKE ? OR surgery_method LIKE ?)";
+                $searchTerm = "%{$q}%";
+                $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm];
+            }
         }
         
-        $sql .= " ORDER BY id DESC LIMIT 30";
+        $sql .= " {$orderBy} LIMIT 30";
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
         $results = $stmt->fetchAll();
         
         $formatted = array_map(function($row) {
             $fullName = trim(($row['pname'] ?? '') . ' ' . ($row['fname'] ?? '') . ' ' . ($row['lname'] ?? ''));
+            $scrStr = !empty($row['screening_no']) ? " [คัดกรอง: {$row['screening_no']}]" : '';
             $hnStr = !empty($row['hn']) ? " [HN: {$row['hn']}]" : '';
             $cidStr = !empty($row['cid']) ? " [CID: {$row['cid']}]" : '';
             $ageStr = !empty($row['age']) ? " ({$row['age']} ปี)" : '';
             return [
                 'id' => $row['id'],
-                'text' => "#{$row['id']} - {$fullName}{$ageStr}{$hnStr}{$cidStr} | สถานะ: " . ($row['status'] ?? 'รอผ่าตัด'),
+                'text' => "{$fullName}{$ageStr}{$scrStr}{$hnStr}{$cidStr} | สถานะ: " . ($row['status'] ?? 'รอผ่าตัด'),
                 'patient' => $row
             ];
         }, $results);

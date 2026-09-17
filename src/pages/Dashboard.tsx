@@ -265,23 +265,25 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 font-anuphan">
       
-      {/* ── Project Title Banner ─────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-r from-orange-50 to-white px-4 py-3 rounded-md border border-orange-100 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
-        <div className="min-w-0">
-          <h1 className="text-sm sm:text-base font-extrabold bg-gradient-to-r from-orange-700 to-orange-400 bg-clip-text text-transparent tracking-tight">
+      {/* ── Project Title Banner (Full Responsive Col-12 with Vibrant Gradient) ── */}
+      <div className="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 p-3.5 sm:p-5 rounded-md text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 transition-all">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-extrabold text-white tracking-tight leading-snug drop-shadow-xs">
             โครงการ “ราษฎรสุขใจ พลานามัยสมบูรณ์ แพทย์พระราชทาน”
           </h1>
-          <p className="text-[10px] sm:text-[11px] text-orange-400 font-normal mt-0.5 leading-relaxed">
+          <p className="text-[11px] xs:text-xs sm:text-sm text-orange-100 font-medium mt-1 leading-relaxed opacity-95">
             โดย สำนักงานพระคลังข้างที่ โรงพยาบาลบ้านแพ้ว (องค์การมหาชน) และแพทย์อาสาฯ
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto bg-white border border-emerald-200 rounded-md px-3 py-1.5 shadow-2xs">
-          <div className="w-6 h-6 rounded-md bg-emerald-100 flex items-center justify-center shrink-0">
-            <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+
+        {/* Vibrant Orange-White Pastel Hospital Badge (Rounded-md) */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 self-start md:self-auto bg-white/20 backdrop-blur-md border border-white/40 rounded-md px-3 sm:px-3.5 py-1.5 sm:py-2 shadow-xs transition-transform hover:scale-[1.01]">
+          <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-md bg-white text-orange-600 flex items-center justify-center shrink-0 shadow-xs">
+            <Building2 className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </div>
           <div className="text-left">
-            <p className="text-[11px] sm:text-xs font-bold text-emerald-700 leading-tight">โรงพยาบาลกมลาไสย</p>
-            <p className="text-[9px] sm:text-[10px] text-emerald-500 font-normal leading-tight">จังหวัดกาฬสินธุ์</p>
+            <p className="text-xs sm:text-sm font-extrabold text-white leading-tight">โรงพยาบาลกมลาไสย</p>
+            <p className="text-[10px] sm:text-xs text-orange-100 font-bold leading-tight mt-0.5">จังหวัดกาฬสินธุ์</p>
           </div>
         </div>
       </div>

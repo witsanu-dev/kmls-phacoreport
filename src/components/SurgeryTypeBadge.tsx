@@ -40,10 +40,15 @@ export const SurgeryTypeBadge: React.FC<SurgeryTypeBadgeProps> = ({ method }) =>
 
   // Procedure Badge Style based on type
   let bgClass = 'bg-slate-50 text-slate-700 border-slate-200';
-  if (rawUpper.includes('PHACO')) {
-    bgClass = 'bg-orange-50 text-orange-700 border-orange-200';
+  if (rawUpper.includes('ECCE') && (rawUpper.includes('SHIFT') || rawUpper.includes('/SHIFT'))) {
+    // ECCE/Shift -> Yellow
+    bgClass = 'bg-yellow-100 text-yellow-800 border-yellow-300 font-bold';
   } else if (rawUpper.includes('ECCE')) {
-    bgClass = 'bg-amber-50 text-amber-700 border-amber-200';
+    // ECCE IOL -> Red (all sides)
+    bgClass = 'bg-red-100 text-red-700 border-red-300 font-bold';
+  } else if (rawUpper.includes('PHACO')) {
+    // Phaco IOL -> Green (all sides)
+    bgClass = 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold';
   } else if (rawUpper.includes('FEMTO')) {
     bgClass = 'bg-purple-50 text-purple-700 border-purple-200';
   } else if (rawUpper.includes('ICCE')) {
